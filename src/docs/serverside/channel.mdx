@@ -1,0 +1,23 @@
+---
+title: channel
+description: Channel gives you the functionality to add a channel to the channels list. This give the options to users to go to a specific channel where messages can only be seen by current users that are in the channel. 
+
+---
+
+## Creating A New Channel
+
+The sono.channel is used to create and add a custom channel to the servers Channels list. Creating a channel will allow clients to create specific channels, allowing users to see and send messages only to those that are in the current channel. The channel method takes in a string as an argument which will be the desired name of the channel, and optionally a callback.
+
+
+
+### Server Side
+```ts lineNumbers=true
+const server = serve({ port: 8080 });
+const sono = new TestSono();
+
+// An example of using channel once an instance of Sono is made
+sono.channel('newChannel', () => {
+  console.log('new channel created')
+})
+
+```

@@ -1,0 +1,24 @@
+---
+
+title: broadcast
+description: Broadcasting message to all clients in a channel
+
+---
+
+## Broadcasting Message To All Clients Within A Channel
+
+The broadcast method permits users to send a message to other members within its channel. The user will not see its own message. Upon invoking broadcast the first argument being the message is required however there is an optional second argument a custom event name. This custom event name will be stored in the response the server sends to all applicable clients. This will allow developers to create custom events dependent on the custom event name they are receiving on the client side from the server.
+
+
+### Client Side
+
+```ts lineNumbers=true 
+
+// example below demonstrates 'user is typing...'
+document.getElementById('messageInputBox').addEventListener('onChange', () => {
+  const user = document.getELementbyId('user').value;
+  const message = `${user} is typing`;
+  sono.broadcast(message);
+});
+
+```

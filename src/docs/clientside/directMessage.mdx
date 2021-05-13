@@ -1,0 +1,26 @@
+---
+title: directmessage
+description: Sends a direct message to a specified client.
+
+---
+
+## Send A Direct Message To A Specific Client
+
+The directMessage method allows you to send messages directly to a specified client. When invoking this method two arguments must be passed in. The first being the message itself and the second being the client you'll like to send the message to. There is also an optional third argument which can be a custom event name and this will be stored in the response the server sends to the selected client. This will allow the developers to create custom events for the custom names the client side will receive from the server. If custom event name is not give on invocation the name will default to 'message'.
+
+
+
+### Client Side
+```ts lineNumbers=true
+/* In this example once the sono WebSocket connection is made and an event 
+listener is created to be able to send a direct message, you'll invoke 
+directMessage method with required arguments. In this example since we 
+didn't provide a custom event name it has been defaulted to 'message'. */
+
+document.getElementById('sendDM').addEventListener('click', () => {
+  const message = document.getElementById('input').value;
+  const client = document.getElementById('client').value;
+  sono.directMessage(message, client);
+});
+
+```

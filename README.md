@@ -1,1 +1,1 @@
-# sono.land
+Landing page application for sono.io!

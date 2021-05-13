@@ -1,0 +1,40 @@
+# Sidebar navigation
+
+- label: 'Introduction'
+  link: '/'
+- label: Tutorials
+  items:
+    - label: 'Chatroom App'
+      link: '/tutorials/chatroom'
+    - label: 'Live Video Chat (w/ WebRTC)'
+      link: '/tutorials/webrtc'
+- label: Server-side Methods
+  items:
+    - label: '.connect'
+      link: '/serverside/connect'
+    - label: '.emit'
+      link: '/serverside/emit'
+    - label: .channel
+      link: '/serverside/channel'
+- label: Client-side Methods
+  items:
+    - label: '.directmessage'
+      link: '/clientside/directMessage'
+    - label: '.broadcast'
+      link: '/clientside/broadcast'
+    - label: .message
+      link: '/clientside/message'
+    - label: .changechannel
+      link: '/clientside/changeChannel'
+    - label: .grab
+      link: '/clientside/grab'
+    - label: .on
+      link: '/clientside/on'
+- label: Additional Concepts
+  items:
+    - label: 'The Payload Object'
+      link: '/additionalConcepts/payload'
+- label: The Team
+  items:
+    - label: 'The Team'
+      link: '/team/contact'

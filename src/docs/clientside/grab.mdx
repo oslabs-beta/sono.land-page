@@ -1,0 +1,36 @@
+---
+
+title: grab
+description: Allows users to grab specific data and information
+
+---
+
+## Allows Users To Grab Specific Data
+
+Grab gives users the ability to obtain specific information. It permits the users to attain multiple data such as a list of all clientsID connected to the server, to a list of all existing channels, to the list of channels the user is in, and the clients own unique id.
+
+``` ts lineNumbers=true
+// this example allows the user to get its own unique ID
+document.getElementById('search').addEventListener('click', () => {
+  const myID = document.getELementbyId('myid').value;
+  sono.grab('myid');
+});
+
+// this example allows the user to get a list of all the clients ID connected to the websocket server
+document.getElementById('search').addEventListener('click', () => {
+  const clients = document.getELementbyId('clients').value;
+  sono.grab('clients');
+});
+
+// this example allows the user to get a list of all active channels
+document.getElementById('search').addEventListener('click', () => {
+  const channels = document.getELementbyId('channels').value;
+  sono.grab('channels');
+});
+
+// this example allows the user to get a list of all clients ID connected in the users channel
+document.getElementById('search').addEventListener('click', () => {
+  const mychannelclients = document.getELementbyId('mychannelclients').value;
+  sono.grab('mychannelclients');
+});
+```

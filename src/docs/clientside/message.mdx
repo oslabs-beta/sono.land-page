@@ -1,0 +1,19 @@
+---
+
+title: message
+description: Send message to all clients including the sender
+
+---
+
+## Send Message To All
+
+Message, sends the message to all clients including the sender. Upon invoking message the first argument being the message is required however there is an optional second argument a custom event name. This custom event name will be stored in the response the server sends to all applicable clients. This will allow developers to create custom events dependent on the custom event name they are receiving on the client side from the server.
+
+``` ts lineNumbers=true
+// example below sends a message to members of a channel
+document.getElementById('send').addEventListener('click', () => {
+  const message = document.getELementbyId('message').value;
+  sono.message(message);
+});
+
+```

@@ -1,0 +1,19 @@
+---
+
+title: changechannel
+description: Allows users to change to a different channel
+
+---
+
+## Change To A Different Channel
+
+Allows users to access different channels in the channels list with a click of a button. Once in a different channel, the user is then allowed to see the messages that are currently being communicated in that specific channel only. This grants users to only see messages that are specific to the channels. 
+
+### Client Side
+
+``` ts lineNumbers=true
+// example below demonstrates a client moving to the 'secret' channel
+document.getElementById('secretChannel').addEventListener('click', () => {
+  sono.changeChannel('Secret');
+});
+```

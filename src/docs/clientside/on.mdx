@@ -1,0 +1,35 @@
+---
+
+title: on
+description: Custom event listener
+
+---
+
+## Creating A Custom Event Listener
+The 'on' method allows developers to create custom event listeners.
+When a user calls a function with a unique event name, the recipient can listen for that event using the 'on' method.
+The recipient will then be able to invoke a callback associated with the custom event name.
+
+### Client Side
+```ts lineNumbers=true
+/* In this example, a custom direct message method is created to send a 
+private message. */
+
+// Client #1 - sends a direct message along with the 'DM" event
+document.getElementById('sendDM').addEventListener('click', () => {
+  const message = document.getElementById('input').value;
+  const client = document.getElementById('client').value;
+  sono.directMessage(message, client, 'DM');
+});
+
+/* Client #2 - listens for the 'DM' event using the 'on' method and creates 
+a custom handler for this event */
+const messageBoard = document.getElementById('privatemessageBoard');
+
+sono.on('DM', (payload) => {
+ const message = document.createElement('li');
+ message.innerText = `FROM: ${payload.from} Message: ${payload.message}`;
+ messageBoard.appendChild(message);
+});
+
+```
