@@ -1,0 +1,31 @@
+---
+title: emit
+description: sends a message to all clients that have a websocket connection to server
+
+---
+
+## When should you be using sono.emit and what does it do?
+
+When you need to send a message to all clients that are currently connected to the server, emit method is used to execute that task. It takes in one argument, a message, to send to all clients that are currently connected via websocket through the channels list.
+
+
+### Client Side
+```ts lineNumbers=true 
+
+// Listening for requests coming into server
+for await (const req of server) {
+  // Serving an html file when client first connects to server
+  if (req.method === "GET" && req.url === "/") {
+    const path = `${Deno.cwd()}/index.html`
+    const content = await serveFile(req, path);
+    req.respond(content)
+  }
+  /* An example of how we can use emit once the client side sends the 
+  initiation of a WebSocket handshake and the process is complete */
+  else if (req.method === "GET" && req.url === "/ws") {
+    sono.connect(req, ()=> {
+      sono.emit('new client connected')
+    });
+  }
+
+```

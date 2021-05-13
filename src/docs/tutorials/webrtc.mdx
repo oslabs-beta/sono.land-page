@@ -1,0 +1,183 @@
+---
+title: WebRTC
+description: Learn to use WebRTC with sono.io.
+---
+
+In this tutorial we will create a video chat app with video using sono.io and the WebRTC API. We will be initiating peer-to-peer connections, and showing off the capabilities of sono.io by using the SonoClient library, the Sono server instance, and the SonoRTC wrapper.
+Do note that the SonoRTC is in its beta version and use at your own risk. 
+We will be building off of our work from the previous chatroom tutorial, so make sure to have gone through that one.
+
+## The Server
+We don't need to add too much to the server-side, we simply need to open a channel, and we'll call it secret.
+This is what your server file should look like: 
+
+
+
+```ts lineNumbers=true title=src/server.ts highlight={8}
+
+import { serve } from "https://deno.land/std@0.95.0/http/server.ts";
+import { serveFile } from "https://deno.land/std@0.95.0/http/file_server.ts";
+import { Sono } from "https://deno.land/x/sono@v1.0/mod.ts"
+
+const server = serve({ port: 3000 });
+const sono = new Sono();
+
+sono.channel('secret', ()=> {console.log('secret opened')})
+
+for await (const req of server) {
+  if (req.method === "GET" && req.url === "/") {
+    const path = `${Deno.cwd()}/static/index.html`
+    const content = await serveFile(req, path);
+    req.respond(content)
+  }
+  else if (req.method === "GET" && req.url === "/ws") {
+    sono.connect(req, () => {
+      sono.emit('new client connected')
+    });
+  }
+  else if (req.method === "GET" && req.url === "/favicon.ico") {
+    // Do nothing in case of favicon request
+  }
+  else {
+    const path = `${Deno.cwd()}/static/${req.url}`;
+    const content = await serveFile(req, path);
+    req.respond(content)
+  }
+}
+
+```
+
+## The HTML File
+Onto the client side. Grab this index.html file, 
+where we've intiatiated a couple containers for the local video element and the remote video elements.
+
+```html lineNumbers=true title=src/static/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+<style>
+  body { font-family: "Courier New"; }
+  #messages_container { height: 350px; }
+  .message {
+    border-bottom: 1px solid #000000;
+    padding: 5px;
+  }
+  #videocontainer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content:center;
+
+    }
+  #maincontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:center;
+  }
+  video {
+      height: '600';
+      width: '600';
+  }
+</style>
+<body>
+  <div id='maincontainer'>
+    <div id='videocontainer'>
+      <div id='localvideocontainer'>
+        <video playsinline autoplay muted="true" id='localVideo'></video>
+      </div>
+      <div id='remotevideocontainer'>
+      </div>
+    </div>
+    <div id='buttoncontainer'>
+    <button class="p-2 text-white bg-black w-full mt-1" id='start'>Start My Video</button>
+    <button class="p-2 text-white bg-black w-full mt-1" id="connectSecret">Connect Secret</button>
+    <button class="p-2 text-white bg-black w-full mt-1" id="connectHome">Connect Home</button>
+    <div id='currentChannel'>Not Connected</div>
+  </div>
+    <div class="mx-auto border border-black mt-10 p-2" id="container" style="max-width: 800px">
+    <div class="font-bold bg-black text-white text-center p-3" id="banner">Sono.io Chat</div>
+      <div class="overflow-x-auto" id="messages_container">
+        <ul id="messageBoard"></ul>
+      </div>
+      <div class="flex">
+        <input class="w-1/2 border border-black p-2" id="username" type="text" placeholder="username" />
+        <input class="w-1/2 border border-black p-2" id="input" type="text" placeholder="message" />
+      </div>
+      <button class="p-2 text-white bg-black w-full mt-1" id="button">send message</button>
+    </div>
+  </div>
+
+</body>
+<script type='module' src="main.js"></script>
+</html>
+```
+
+Above, we can also see that we have two buttons: 
+one for connecting to the 'home' channel, which will always be the default channel you are connected to when you first initiate a WebSocket connection, and the second for connecting to 'secret'.
+
+##The JavaScript
+Now to set up the actual logic behind peer-to-peer connections. The highlighted lines are the only added lines.
+
+```js lineNumbers=true title=src/static/main.js highlight={31-50,2}
+import { SonoClient } from "https://deno.land/x/sono@v1.1/src/sonoClient.js"
+import { webRTC } from "https://deno.land/x/sono@v1.1/src/sonoRTC.js"
+
+const sono = new SonoClient('ws://localhost:8080/ws');
+
+sono.onconnection(()=>{
+  sono.message('client connected')
+})
+
+sono.on('message', (payload) => {
+  const messageBoard = document.getElementById('messageBoard');
+  const newMessage = document.createElement('li')
+  console.log(payload)
+  if(payload.message.username) newMessage.innerHTML = `<strong>${payload.message.username}:</strong> ${payload.message.message}`;
+  else newMessage.innerHTML = payload.message;
+  messageBoard.appendChild(newMessage);
+})
+
+document.getElementById('button').addEventListener('click', () => {
+  const message = document.getElementById('input').value;
+  const username = document.getElementById('username').value;
+  sono.broadcast({message, username});
+  const messageBoard = document.getElementById('messageBoard');
+  const newMessage = document.createElement('li')
+  newMessage.innerHTML = `<strong>${username}:</strong> ${message}`;
+  newMessage.style.cssFloat='right';
+  messageBoard.appendChild(newMessage);
+  messageBoard.appendChild(document.createElement('br'));
+});
+
+const serverConfig = 'stun:stun2.l.google.com:19302';
+const localVideo = document.getElementById('localVideo');
+const constraints = {audio: true, video: true};
+const remotevideocontainer = document.getElementById('remotevideocontainer')
+
+const rtc= new webRTC(serverConfig, sono, localVideo, remotevideocontainer, constraints);
+
+document.getElementById('start').onclick = () => {
+  rtc.startLocalMedia();
+};
+
+document.getElementById('connectSecret').onclick = () => {
+  document.getElementById('currentChannel').innerText = 'Connected to Secret'
+  rtc.changeChannel('secret');
+}
+
+document.getElementById('connectHome').onclick = () => {
+  document.getElementById('currentChannel').innerText = 'Connected to Home'
+  rtc.changeChannel('home');
+}
+
+
+```
+Notice that here we are using a free STUN server hosted by Google on line 31. Read more about STUN servers [here](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols).
+Now, when the server is ran and you go to your host, you should see a live video and audio chat application capable of multi-to-multi connections.

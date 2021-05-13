@@ -1,0 +1,48 @@
+---
+title: connect
+description: Once websocket handshake is initiated from client side by invoking connect it will complete the handshake process and will enable real-time bidirectional and event base communication between the browser and the server.
+
+---
+
+## WebSocket Connection
+
+To establish a WebSocket connection, you will need to use sono.connect. Once the connect method is called, it will initiate the WebSocket handshake process. Data from the request object is necessary to complete the handshake between the server and client. A new instance of a client will be created with a unique ID. The client will then be added to the clients list that stores all clients currently connected to the server. If you are using the Channel feature, all new clients will enter the 'Home' channel by default. Connect will set up the sono WebSocket connection to listen to all incoming messages from the server. How the server will respond depends on the protocol of the incoming message. Protocols have been established on the Client side library.
+
+To set up, first start your server with a specified port. Then create a new instance of the WebSocket API on the client side with a url such as 'ws://localhost:your port number/your endpoint'. This URL must be passed in as an argument when creating a new instance of SonoClient. When the server receives a request to upgrade to a WebSocket connection, sono.connect is invoked passing in the request and callback.
+
+### Client Side
+```ts lineNumbers=true
+/* Example of creating a new instance of SonoClient which takes in the URL 
+of the server using the WebSocket protocol.The end point in this 
+particular example is 'ws'.
+ */
+const sono = new SonoClient('ws://localhost:8080/ws');
+sono.onconnection(()=>{
+  sono.message('client connected')
+})
+
+sono.on('message', (msg) => {
+  console.log('message received:', msg)
+})
+
+```
+
+
+### Server Side
+```ts lineNumbers=true
+const server = serve({ port: 8080 });
+const sono = new Sono();
+
+/* Our server is listening for incoming requests that is asking to 
+  upgrade to a WebSockect connection. In this example we are waiting 
+  for requests coming in through the ws protocol with the endpoint of 
+  'ws'. */
+for await (const req of server) {
+  if (req.method === "GET" && req.url === "/ws") {
+    sono.connect(req, ()=> {
+      sono.emit('new client connected')
+    });
+  }
+}
+
+```

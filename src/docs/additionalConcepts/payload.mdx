@@ -1,0 +1,25 @@
+---
+title: Payload
+description: The payload object that is sent from the server-side to all the applicable clients holds all the important data users need so they can know which custom events they will use for whatever custom events they may receive. 
+
+---
+
+## Sending data through the payload object
+
+When a client invokes a method, data is sent as the value of the payload property in a packet.
+The payload is designed to be versatile so it may contain a message, a channel to change to, and more.
+
+### 
+```ts lineNumbers=true
+/* In this example, it is assumed that a different client has sent a message.
+The recipient below is listening for a message and has access to the payload of a packet.
+The recipient will then be able to display the data from the payload.
+*/
+
+sono.on('message', (payload) => {
+ const message = document.createElement('li');
+ message.innerText = payload.message;
+ messageBoard.appendChild(message);
+});
+
+```
