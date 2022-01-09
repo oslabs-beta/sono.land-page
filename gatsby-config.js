@@ -1,8 +1,8 @@
 module.exports = {
   siteMetadata: {
-    siteTitle: `sono.io`,
-    defaultTitle: `sono.io`,
-    siteTitleShort: `sono.io`,
+    siteTitle: `sono.land`,
+    defaultTitle: `sono.land`,
+    siteTitleShort: `sono.land`,
     siteDescription: `Real-time communication library on the Deno runtime`,
     siteUrl: `https://sono.land/`,
     siteAuthor: `@sono`,

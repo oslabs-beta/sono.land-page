@@ -47,7 +47,7 @@ for await (const req of server) {
 
 ```
 
-## The HTML File
+## The HTML
 Onto the client side. Grab this index.html file, 
 where we've intiatiated a couple containers for the local video element and the remote video elements.
 
@@ -122,7 +122,7 @@ where we've intiatiated a couple containers for the local video element and the 
 Above, we can also see that we have two buttons: 
 one for connecting to the 'home' channel, which will always be the default channel you are connected to when you first initiate a WebSocket connection, and the second for connecting to 'secret'.
 
-##The JavaScript
+## The JavaScript
 Now to set up the actual logic behind peer-to-peer connections. The highlighted lines are the only added lines.
 
 ```js lineNumbers=true title=src/static/main.js highlight={31-50,2}
